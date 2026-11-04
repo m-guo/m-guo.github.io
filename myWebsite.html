@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Welcome to the island!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+/* ============ COLORS & FONTS — edit these to restyle everything ============ */
+:root {
+  --sea-1: #d4f1fa;
+  --sea-2: #a8dbee;
+  --paper: #fff3d6;        /* map parchment */
+  --paper-dark: #f7dfae;
+  --ink: #6e4458;          /* all outlines and text */
+  --pink: #fbc9d5;
+  --mint: #c5ead6;
+  --lilac: #dcd2f4;
+  --butter: #fdeaa8;
+  --font-display: "Caveat", "Segoe Print", "Bradley Hand", cursive;
+  --font-body: "Patrick Hand", "Segoe Print", "Comic Sans MS", cursive;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+body {
+  font-family: var(--font-body); color: var(--ink);
+  font-size: 1.15rem; line-height: 1.5; overflow-x: hidden;
+  background:
+    repeating-linear-gradient(174deg, transparent 0 54px, rgba(255,255,255,.28) 54px 58px),
+    linear-gradient(180deg, var(--sea-1), var(--sea-2));
+  background-attachment: fixed;
+}
+h1, h2, h3 { font-family: var(--font-display); font-weight: 700; line-height: 1.05; margin: 0; }
+a { color: inherit; }
+:focus-visible { outline: 3px dashed var(--ink); outline-offset: 4px; }
+
+/* ---------- Top bar ---------- */
+.topbar { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; padding: 1.1rem 1.4rem 0; max-width: 1100px; margin: 0 auto; }
+.site-title {
+  font-family: var(--font-display); font-weight: 700; font-size: clamp(2.2rem, 7vw, 3.6rem); line-height: 1;
+  color: var(--ink); background: none; border: 0; padding: 0; margin: 0; text-align: left; cursor: default;
+  text-shadow: 3px 3px 0 #fff, -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff;
+}
+button.site-title { cursor: pointer; }
+
+/* ---------- Torn-banner button (shape from your sketch) ---------- */
+.banner {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--banner) center / 100% 100% no-repeat;
+  border: 0; color: var(--ink); text-decoration: none; cursor: pointer; appearance: none;
+  font-family: var(--font-display); font-weight: 700; line-height: 1;
+  min-width: 9.5rem; min-height: 3.6rem; padding: .5rem 1.8rem .6rem; font-size: 1.5rem;
+  transition: transform .15s ease; filter: drop-shadow(0 3px 0 rgba(110,68,88,.2));
+}
+.banner:hover { transform: rotate(-2deg) scale(1.05); }
+
+/* ---------- Home: the map ---------- */
+.map { position: relative; container-type: inline-size; width: min(92vw, 600px); aspect-ratio: 3 / 4; margin: 1rem auto 2.5rem; }
+.map svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.trail { fill: none; stroke: #d4739a; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 1 9; }
+.stop { position: absolute; transform: translate(-50%, -50%); font-size: 5.6cqw; min-width: 28cqw; min-height: 13cqw; padding: 0 5cqw 1cqw; }
+.stop:hover { transform: translate(-50%, -50%) rotate(-3deg) scale(1.06); }
+.home-x { position: absolute; left: 21%; top: 88%; transform: translate(-50%, -50%); text-align: center; font-family: var(--font-display); font-weight: 700; font-size: 6cqw; pointer-events: none; }
+.home-x b { display: block; font-size: 14cqw; line-height: .7; color: #ee7f9f; }
+
+/* ---------- Inner pages ---------- */
+.page { width: min(94vw, 720px); margin: 1rem auto 3rem; }
+.sheet {
+  background: var(--paper); padding: clamp(1.5rem, 5vw, 3rem);
+  border: 5px solid var(--ink); border-radius: 8px 24px 10px 28px / 22px 10px 26px 8px;
+  box-shadow: 0 9px 0 var(--pink);
+}
+.sheet h1 { font-size: clamp(2.6rem, 9vw, 4rem); display: flex; align-items: center; gap: .6rem; }
+.sheet .intro { font-size: 1.3rem; margin: .6rem 0 1.4rem; max-width: 58ch; }
+.block { border-top: 3px dotted #e29bb2; padding: 1.1rem 0; max-width: 62ch; }
+.block h2 { font-size: 1.9rem; }
+.block .meta { opacity: .75; margin: .1rem 0 .3rem; }
+.block p { margin: 0; }
+.tags { display: flex; flex-wrap: wrap; gap: .6rem; list-style: none; padding: 0; margin: 0; }
+.tags li { border: 2.5px solid var(--ink); border-radius: 16px 5px 16px 5px; padding: .1rem .9rem; background: var(--pink); }
+.tags li:nth-child(3n+2) { background: var(--mint); }
+.tags li:nth-child(3n) { background: var(--lilac); }
+.links { list-style: none; padding: 0; margin: 0; }
+.links li { padding: .35rem 0; }
+.links a { font-size: 1.35rem; text-decoration-style: wavy; text-underline-offset: 4px; }
+.pagefoot { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-top: 1.6rem; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* =====================================================================
+   EDIT YOUR SITE HERE
+   ---------------------------------------------------------------------
+   • VARS: define your own values, then write {{varName}} anywhere in the
+     text below (e.g. "Hi, I'm {{name}}"). Add as many as you like.
+   • PAGES: each has a map button label, a title, an intro, and "blocks"
+     (heading / meta / text). Basic HTML like <b> or <a> works in text.
+   • x / y: where the button sits on the map (% of map size).
+   • color: the pastel color of that page's map button.
+   • Pages are visited in this order by the "Next" buttons.
+   ===================================================================== */
+const CONFIG = {
+  vars: {
+    name: "Marissa Guo",
+    email: "mg9863@princeton.edu",
+    city: "Princeton, New Jersy",
+    role: "Your Role"
+  },
+
+  home: { title: "Welcome to the island!" },
+
+  pages: [
+    {
+      id: "about", label: "About Me", color: "#fbc9d5", x: 56, y: 67,
+      title: "About me",
+      intro: "Coder, musician, current student at Princeton University.",
+      blocks: [
+        { heading: "Placeholder heading", meta: "Placeholder detail", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." },
+        { heading: "Another heading", text: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." }
+      ]
+    },
+    {
+      id: "experiences", label: "Experiences", color: "#c5ead6", x: 25, y: 31,
+      title: "Experiences",
+      intro: "Placeholder intro about where {{name}} has been and what was found along the way.",
+      blocks: [
+        { heading: "Placeholder Role Title", meta: "Company Name · 2023 – Present", text: "Placeholder description of what you did, what you learned, and what you’re proud of." },
+        { heading: "Placeholder Role Title", meta: "Company Name · 2021 – 2023", text: "Placeholder description of what you did, what you learned, and what you’re proud of." },
+        { heading: "Placeholder School or Project", meta: "Institution · 2017 – 2021", text: "Placeholder description." }
+      ]
+    },
+    {
+      id: "interests", label: "Interests", color: "#dcd2f4", x: 72, y: 33,
+      title: "Interests",
+      intro: "Placeholder intro about the things {{name}} loves digging into.",
+      blocks: [
+        { heading: "Placeholder interest", text: "A short note about why this one matters to you." },
+        { heading: "Another interest", text: "Another short note." }
+      ],
+      tags: ["Interest one", "Interest two", "Interest three", "Interest four"]
+    },
+    {
+      id: "contact", label: "Contact", color: "#fdeaa8", x: 70, y: 88,
+      title: "Contact",
+      intro: "Placeholder: the treasure is found. Say hello to {{name}}.",
+      blocks: [],
+      links: [
+        { label: "{{email}}", url: "mailto:{{email}}" },
+        { label: "LinkedIn", url: "https://example.com/linkedin" },
+        { label: "GitHub", url: "https://example.com/github" }
+      ]
+    }
+  ]
+};
+/* ============================ END OF EDITING ============================ */
+
+
+/* ---------- engine (you shouldn’t need to change anything below) ---------- */
+const V = CONFIG.vars, INK = "#6e4458";
+const fill = s => String(s ?? "").replace(/\{\{\s*(\w+)\s*\}\}/g, (m, k) => (k in V ? V[k] : m));
+const app = document.getElementById("app");
+
+/* Torn-banner shape, filled with whatever pastel color a button asks for */
+function bannerURL(color) {
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 80' preserveAspectRatio='none'><path d='M4 10 L40 7 Q60 13 80 8 L130 6 Q150 11 170 6 L196 3 L178 26 Q189 34 180 44 L191 58 L186 73 Q160 66 140 75 L100 70 Q80 80 60 70 L20 75 L7 70 Q17 62 22 56 L13 42 Q21 34 14 26 Z' fill='${color}' stroke='${INK}' stroke-width='3.5' stroke-linejoin='round' vector-effect='non-scaling-stroke'/></svg>`;
+  return `url("data:image/svg+xml,${encodeURIComponent(svg).replace(/'/g, "%27")}")`;
+}
+const paintBanners = () => app.querySelectorAll("[data-fill]").forEach(b => b.style.setProperty("--banner", bannerURL(b.dataset.fill)));
+
+/* Dotted trail between stops (map canvas is 600 × 800) */
+const TRAIL = [
+  "M128 690 C170 745 235 722 280 680 S322 600 338 548",
+  "M334 520 C362 470 302 420 252 432 C200 444 222 380 272 370 C330 360 232 304 205 268",
+  "M222 242 C244 162 342 130 420 150 C452 160 456 204 450 238",
+  "M436 300 C420 420 440 520 472 500 C522 470 482 392 452 422 C430 462 452 600 428 690"
+];
+const MAP_POLY = "40,150 70,100 120,120 170,70 230,95 270,60 330,85 390,60 440,95 500,70 560,110 545,200 575,260 550,330 580,400 552,470 575,560 545,640 570,720 540,775 470,760 400,782 320,764 240,785 160,765 90,780 45,730 70,640 40,560 62,470 38,380 66,300 40,230";
+
+function homeHTML() {
+  const stops = CONFIG.pages.map(p =>
+    `<button class="banner stop" data-fill="${p.color}" data-go="${p.id}" style="left:${p.x}%;top:${p.y}%">${fill(p.label)}</button>`).join("");
+  return `
+    <header class="topbar"><h1 class="site-title">${fill(CONFIG.home.title)}</h1></header>
+    <main class="map">
+      <svg viewBox="0 0 600 800" aria-hidden="true">
+                <polygon fill="rgba(110,68,88,.2)" transform="translate(7 11)" points="${MAP_POLY}"/>
+        <polygon fill="var(--paper)" stroke="var(--ink)" stroke-width="7" stroke-linejoin="round" points="${MAP_POLY}"/>
+        <polygon fill="none" stroke="#e2b873" stroke-width="2.5" stroke-dasharray="7 7" stroke-linecap="round" transform="translate(310 430) scale(.94) translate(-310 -430)" points="${MAP_POLY}"/>
+        ${TRAIL.map(d => `<path class="trail" d="${d}"/>`).join("")}
+      </svg>
+      <div class="home-x"><b>✕</b>home</div>
+      ${stops}
+    </main>`;
+}
+
+function pageHTML(i) {
+  const p = CONFIG.pages[i], next = CONFIG.pages[i + 1];
+  const blocks = (p.blocks || []).map(b => `
+    <section class="block"><h2>${fill(b.heading)}</h2>
+      ${b.meta ? `<p class="meta">${fill(b.meta)}</p>` : ""}${b.text ? `<p>${fill(b.text)}</p>` : ""}</section>`).join("");
+  const tags = p.tags ? `<section class="block"><ul class="tags">${p.tags.map(t => `<li>${fill(t)}</li>`).join("")}</ul></section>` : "";
+  const links = p.links ? `<section class="block"><ul class="links">${p.links.map(l => `<li><a href="${fill(l.url)}">${fill(l.label)}</a></li>`).join("")}</ul></section>` : "";
+  return `
+    <header class="topbar">
+      <button class="site-title" data-go="">${fill(CONFIG.home.title)}</button>
+    </header>
+    <main class="page"><article class="sheet">
+      <h1 tabindex="-1">${fill(p.title)}</h1>
+      <p class="intro">${fill(p.intro)}</p>${blocks}${tags}${links}
+    </article>
+    <div class="pagefoot">
+      <button class="banner" data-fill="#fff3d6" data-go="">Back to map</button>
+      ${next ? `<button class="banner" data-fill="${next.color}" data-go="${next.id}">Next: ${fill(next.label)}</button>` : ""}
+    </div></main>`;
+}
+
+function show(id) {
+  const i = CONFIG.pages.findIndex(p => p.id === id);
+  app.innerHTML = i === -1 ? homeHTML() : pageHTML(i);
+  document.title = i === -1 ? fill(CONFIG.home.title) : `${fill(CONFIG.pages[i].title)} · ${fill(V.name)}`;
+  paintBanners();
+  window.scrollTo(0, 0);
+  const h = app.querySelector("main h1[tabindex]"); if (h) h.focus({ preventScroll: true });
+}
+
+function go(id) {
+  show(id);
+  try { history.pushState(null, "", id ? "#" + id : location.pathname + location.search); } catch (e) {}
+}
+
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-go]");
+  if (!t) return;
+  e.preventDefault();
+  go(t.dataset.go);
+});
+window.addEventListener("popstate", () => show(location.hash.slice(1)));
+show(location.hash.slice(1));
+</script>
+</body>
+</html>
